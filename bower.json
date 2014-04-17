@@ -1,0 +1,31 @@
+{
+  "name": "SuperSlide",
+  "main": "SuperSlide.js",
+  "version": "1.0",
+  "authors": [
+    "webteam@forepoint.co.uk"
+  ],
+  "description": "A jQuery Slider plugin built to be responsive. Has the abil",
+  "keywords": [
+    "Slider",
+    "jQuery",
+    "CSS3",
+    "HTML5",
+    "Frontend",
+    "Javascript",
+    "Media"
+  ],
+  "dependencies": {
+    "jquery":         "~1.11.0",
+    "modernizr":      "~2.7.2"
+  },
+  "license": "MIT",
+  "homepage": "http://mintuz.com",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

@@ -1,0 +1,72 @@
+/*
+
+	<div class="slider">
+		<article class="slider__panel is-active">
+			<img src="#" alt="">
+		</article>
+		<article class="slider__panel">
+			<img src="#" alt="">
+		</article>
+		<article class="slider__panel">
+			<img src="#" alt="">
+		</article>
+		<article class="slider__panel">
+			<img src="#" alt="">
+		</article>
+		<article class="slider__panel">
+			<img src="#" alt="">
+		</article>
+		<article class="slider__panel">
+			<img src="#" alt="">
+		</article>
+
+		<div class="slider-controls">
+			<div class="wrap">
+				<a href="#" class="slider__arrows arrows arrows--left" data-dir="prev"><i class="i i-arrow-left"></i></a>
+				<div class="slider-bullets slider__pagination">
+          <a href="#" class="slider-pagination__btn is-active"></a>
+          <a href="#" class="slider-pagination__btn"></a>
+          <a href="#" class="slider-pagination__btn"></a>
+          <a href="#" class="slider-pagination__btn"></a>
+          <a href="#" class="slider-pagination__btn"></a>
+          <a href="#" class="slider-pagination__btn"></a>
+        </div>
+				<a href="#" class="slider__arrows arrows--right" data-dir="next"><i class="i i-arrow-right"></i></a>
+			</div>
+		</div>
+
+	</div>
+
+ */
+
+.slider {
+	width: 100%;
+	overflow: hidden;
+}
+
+// need to clearfix this element.
+// need to also transition this container
+.slider__container {
+	position: relative;
+}
+
+.slider__panel{
+	width: 100%;
+	float: left;
+}
+
+// need to clearfix this element.
+.slider__pagination {
+	position: relative;
+	z-index: 999;
+}
+
+.slider-pagination__btn {
+	display: 	block;
+	float: 		left;
+	background-color: rgb(0,0,0);
+	width: 	24px;
+	height: 24px;
+	margin-right: 	5px;
+	border-radius: 	100px;
+}
