@@ -5,7 +5,7 @@
   "authors": [
     "webteam@forepoint.co.uk"
   ],
-  "description": "A jQuery Slider plugin built to be responsive. Has the abil",
+  "description": "A jQuery Slider plugin built to be responsive. Has the options to auto cycle, pagination, navigation & duration",
   "keywords": [
     "Slider",
     "jQuery",
