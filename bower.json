@@ -15,10 +15,6 @@
     "Javascript",
     "Media"
   ],
-  "dependencies": {
-    "jquery":         "~1.11.0",
-    "modernizr":      "~2.7.2"
-  },
   "license": "MIT",
   "homepage": "http://mintuz.com",
   "ignore": [
