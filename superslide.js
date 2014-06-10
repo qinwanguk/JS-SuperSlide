@@ -1,7 +1,7 @@
 /*
  * SuperSlide
  * Author: Adam Bulmer
- * Version: 1.0b
+ * Version: 1.2.1
  */
 $.fn.SuperSlide = function( opts ) {
 
@@ -11,11 +11,13 @@ $.fn.SuperSlide = function( opts ) {
     'pause' :      false,
     'pagination' : false,
     'navigation' : false,
+    'css_timing' : 'cubic-bezier(0.25, 0.1, 0.25, 1)',
     'pagination_selector' : ".slider__pagination",
-    'navigation_btns' : '.slider__arrows',
+    'navigation_btns' : '.slider__arrow',
     'panels_selector' : '.slider__panel',
-    'timeout' : 3000,
+    'timeout' : 13000,
     'visible_panels' : 1,
+    'touch' : false
 
   }, opts );
 
@@ -27,13 +29,18 @@ $.fn.SuperSlide = function( opts ) {
 
     init : function( slider ) {
 
+      $.event.trigger({
+        type: "SuperSlide.before_init",
+        slider : slider
+      });
+
       // starting position, the current index.
       slider.current_index = 0;
 
       //Lets find our important elements
       slider.panels = slider.find( settings.panels_selector );
       slider.pagination_btns = slider.find( settings.pagination_selector ).find( 'a' );
-      slider.navigation_btns = $( settings.navigation_btns );
+      slider.navigation_btns = slider.find( settings.navigation_btns );
 
       // store the number of panels
       slider.panels.count = slider.panels.size();
@@ -48,6 +55,12 @@ $.fn.SuperSlide = function( opts ) {
       methods.setup_pagination( slider );
       methods.setup_navigation( slider );
       methods.auto_cycle( slider );
+      methods.setup_touch( slider );
+
+      $.event.trigger({
+        type: "SuperSlide.after_init",
+        slider : slider
+      });
 
     },
     setup_container: function( slider ){
@@ -87,13 +100,20 @@ $.fn.SuperSlide = function( opts ) {
     },
     slide : function( slider, index ) {
 
+      // Event called before the slider begins to slide. exposes the slider object.
+      $.event.trigger({
+        type: "SuperSlide.before_slide",
+        next_panel : index,
+        slider : slider
+      });
+
       if ( methods.supports_transitions() ) {
 
         var styles = {};
         var left_value = slider.panel_width * index;
 
         styles.transform = 'translate(' + '-' + left_value.toFixed(4) + '%, 0px)';
-        styles.transition = settings.speed + 'ms cubic-bezier(0.25, 0.1, 0.25, 1)';
+        styles.transition = settings.speed + 'ms ' + settings.css_timing;
 
         slider.animating = true;
         slider.panels_container.css( styles );
@@ -121,6 +141,13 @@ $.fn.SuperSlide = function( opts ) {
 
       }
 
+      // Event called after the slider begins to slide. exposes the slider object.
+      $.event.trigger({
+        type: "SuperSlide.after_slide",
+        current_panel: index,
+        slider : slider
+      });
+
     },
     auto_cycle : function( slider ) {
 
@@ -147,7 +174,11 @@ $.fn.SuperSlide = function( opts ) {
 
             methods.slide( slider, index );
 
+
+
           }, settings.timeout );
+
+          slider.attr( 'data-timeout-id', slider.cycle );
 
         }
 
@@ -173,6 +204,14 @@ $.fn.SuperSlide = function( opts ) {
         slider.pagination_btns.click( function(){
 
           var current_tab = $( this );
+
+          // Event called after the pagination btns have been clicked
+          $.event.trigger({
+            type: "SuperSlide.pagination_clicked",
+            new_panel_index: current_tab.index,
+            current_panel_index: slider.current_index,
+            slider : slider
+          });
 
           methods.restart_cycle( slider );
 
@@ -213,10 +252,22 @@ $.fn.SuperSlide = function( opts ) {
         // Should we move the slider, or should we reset it.
 
         if ( dir == 'prev' ) {
-            index = ( slider.current_index == 0 ) ? slider.panels.count - 1 : slider.current_index - 1;
+            
+          index = ( slider.current_index == 0 ) ? slider.panels.count - settings.visible_panels : slider.current_index - 1;
+
         } else {
-            index = ( slider.current_index == ( slider.panels.count - 1 ) ) ? 0 : slider.current_index + 1;
+          
+          index = ( ( slider.current_index + 1 ) < ( slider.panels.count - ( settings.visible_panels - 1 ) ) ) ? slider.current_index + 1 : 0;
+
         }
+
+        // Event called after the navigation btns have been clicked
+        $.event.trigger({
+          type: "SuperSlide.navigation_clicked",
+          new_panel_index: index,
+          current_panel_index: slider.current_index,
+          slider : slider
+        });
 
         methods.slide( slider, index );
 
@@ -229,13 +280,34 @@ $.fn.SuperSlide = function( opts ) {
       });
 
     },
+    setup_touch : function( slider ) {
+
+      if( settings.touch ) {
+
+        var index = 0;
+
+        Hammer( slider[ 0 ] ).on( 'swiperight', function( event ){
+
+          index = ( slider.current_index == 0 ) ? slider.panels.count - settings.visible_panels : slider.current_index - 1;
+          methods.slide( slider, index );
+
+        } );
+
+        Hammer( slider[ 0 ] ).on( 'swipeleft', function( event ){
+
+          index = ( ( slider.current_index + 1 ) < ( slider.panels.count - ( settings.visible_panels - 1 ) ) ) ? slider.current_index + 1 : 0;
+          methods.slide( slider, index );
+
+        } );
+
+      }
+
+    },
     //checks to see if we support css transitions.
     supports_transitions : function() {
 
       if( 'Modernizr' in window ) {
-
-          return Modernizr.csstransitions;
-
+        return Modernizr.csstransitions;
       }
 
       var body = document.body || document.documentElement;
@@ -263,8 +335,10 @@ $.fn.SuperSlide = function( opts ) {
 
   };
 
-  return $(this).each( function() {
-    methods.init( $(this) );
+  return $( this ).each( function() {
+
+      methods.init( $( this ) );
+
   });
 
 };
