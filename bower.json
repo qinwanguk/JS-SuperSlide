@@ -3,7 +3,7 @@
   "main": "SuperSlide.js",
   "version": "1.2.1",
   "authors": [
-    "webteam@forepoint.co.uk"
+    "zzz@forepoint.co.uk"
   ],
   "description": "A jQuery Slider plugin built to be responsive. Has the options to auto cycle, pagination, navigation & duration",
   "keywords": [
